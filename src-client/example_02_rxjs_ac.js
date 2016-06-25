@@ -1,7 +1,19 @@
 import $ from 'jquery';
+import Rx from 'rxjs/Rx';
 
 const $title = $('#title');
 const $results = $('#results');
+
+
+Rx.Observable.fromEvent($title, 'keyup')
+    .map(e => e.target.value)
+    .distinctUntilChanged()
+    .debounceTime(500)
+    .switchMap(getItems)
+    .subscribe(items => {
+        $results.empty();
+        $results.append(items.map(i => $('<li />').text(i)));
+    })
 
 //------------------
 // Library ( faking an ajax promise)
